@@ -1,10 +1,10 @@
 package com.dmitry.korobeynikov.parsebib01;
 
+import android.os.Bundle;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import android.os.Bundle;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -22,6 +22,8 @@ public class MainActivity extends AppCompatActivity {
 
     private BibDatabase database;
 
+    private int loaded = 0;
+
     public MainActivity() {
     }
 
@@ -33,12 +35,10 @@ public class MainActivity extends AppCompatActivity {
         init();
 
         RecyclerView recyclerView = findViewById(R.id.list);
-        //final MyAdapter adapter = new MyAdapter(this, bibs);
 
         final MyAdapter[] adapter = {updateAdapter()};
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-
 
         recyclerView.setAdapter(adapter[0]);
         recyclerView.setLayoutManager(layoutManager);
@@ -47,10 +47,8 @@ public class MainActivity extends AppCompatActivity {
         endlessScrollEventListener = new EndlessScrollEventListener(layoutManager) {
             @Override
             public void onLoadMore(int pageNum, RecyclerView recyclerView) {
-                //init();
-                //bibs.add(database.getEntry(0));
-                bibs.addAll(bibs);
-                //adapter = new MyAdapter(contex, bibs);
+                init();
+
                 adapter[0] = updateAdapter();
                 recyclerView.setAdapter(adapter[0]);
             }
@@ -64,18 +62,19 @@ public class MainActivity extends AppCompatActivity {
         return new MyAdapter(this, bibs);
     }
 
-
     private void init() {
         try (InputStreamReader reader =
-                     new InputStreamReader(getResources().openRawResource(R.raw.temp));) {
+                     new InputStreamReader(getResources().openRawResource(R.raw.references));) {
             database = new BibDatabase(reader);
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        for (int i = 0; i < database.getSize(); i++) {
+        int loadOneOff = 10;
+        for (int i = loaded; i - loaded < loadOneOff && i < database.getSize(); i++) {
             bibs.add(database.getEntry(i));
         }
+        loaded += loadOneOff;
     }
 }
 

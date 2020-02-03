@@ -35,7 +35,11 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        holder.typeView.setText(bibs.get(position).getType().toString());
+
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(bibs.get(position).getType());
+        holder.typeView.setText(stringBuilder);
+
         holder.authorView.setText(bibs.get(position).getField(Keys.AUTHOR));
         holder.booktitleView.setText(bibs.get(position).getField(Keys.TITLE));
         holder.yearView.setText(bibs.get(position).getField(Keys.YEAR));

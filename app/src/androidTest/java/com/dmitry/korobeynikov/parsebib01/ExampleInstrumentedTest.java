@@ -1,27 +1,28 @@
 package com.dmitry.korobeynikov.parsebib01;
 
-import android.content.Context;
-
-import androidx.test.platform.app.InstrumentationRegistry;
+import androidx.test.espresso.Espresso;
+import androidx.test.espresso.contrib.RecyclerViewActions;
+import androidx.test.espresso.matcher.ViewMatchers;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
+import androidx.test.rule.ActivityTestRule;
 
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import static org.junit.Assert.*;
-
-/**
- * Instrumented test, which will execute on an Android device.
- *
- * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
- */
 @RunWith(AndroidJUnit4.class)
 public class ExampleInstrumentedTest {
-    @Test
-    public void useAppContext() {
-        // Context of the app under test.
-        Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
 
-        assertEquals("com.dmitry.korobeynikov.parsebib01", appContext.getPackageName());
+    @Rule
+    public ActivityTestRule<MainActivity> activityTestRule =
+            new ActivityTestRule<>(MainActivity.class);
+
+    @Test(expected = OutOfMemoryError.class)
+    public void scrollTest() {
+        int n = 6000;
+        for (int i = 0; i < n; i++) {
+            int index = activityTestRule.getActivity().bibs.size() - 1;
+            Espresso.onView(ViewMatchers.withId(R.id.list)).perform(RecyclerViewActions.scrollToPosition(index));
+        }
     }
 }
